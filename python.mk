@@ -53,7 +53,7 @@ python_purge: python_clean
 	@rm -rf ${VIRTUALENV_DIR}
 
 python_egg: setup.py ${PYTHON_COMPILED}
-	@${VIRTUALENV} python setup.py bdist_egg --exclude-source-files > /dev/null
+	${VIRTUALENV} python setup.py bdist_egg --exclude-source-files > /dev/null
 
 python_wheel: setup.py ${PYTHON_COMPILED} ${REQUIREMENTS_TEST}
-	@${VIRTUALENV} python setup.py bdist_wheel > /dev/null
+	${VIRTUALENV} python setup.py bdist_wheel > /dev/null
