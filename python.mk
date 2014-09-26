@@ -6,11 +6,11 @@ PYTHON_MODULES?=${shell find}
 PYTHON_SOURCES?=${shell find ${PYTHON_MODULES} -type f -iname '*.py'}
 PYTHON_COMPILED?= $(patsubst %.py,%.pyc, ${PYTHON_SOURCES})
 
+CHECKPOINT_DIR?=.checkpoint
+CHECKPOINT=${CHECKPOINT_DIR}/python.check
 
-CHECKPOINT=.checkpoint/python.check
-
-REQUIREMENTS=.checkpoint/requirements.txt
-REQUIREMENTS_TEST=.checkpoint/requirements_test.txt
+REQUIREMENTS=${CHECKPOINT_DIR}/requirements.txt
+REQUIREMENTS_TEST=${CHECKPOINT_DIR}/requirements_test.txt
 
 python_default: python_test
 
@@ -41,7 +41,7 @@ python_test: python_build ${REQUIREMENTS_TXT}
 	${VIRTUALENV} nosetests
 
 python_clean:
-	@rm -rf .checkpoint
+	@rm -rf ${CHECKPOINT_DIR}
 	@find ${PYTHON_MODULES} -regex '^.*py[co]$$' -type f -delete
 	@rm -rf build
 	@rm -rf dist
