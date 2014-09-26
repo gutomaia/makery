@@ -24,7 +24,7 @@ ${REQUIREMENTS}: ${CHECKPOINT} ${VIRTUALENV_DIR}/bin/activate requirements.txt
 	${VIRTUALENV} pip install -r requirements.txt && \
 		touch $@
 
-${REQUIREMENTS_TXT}: ${CHECKPOINT} ${VIRTUALENV_DIR}/bin/activate requirements_test.txt
+${REQUIREMENTS_TEST}: ${CHECKPOINT} ${VIRTUALENV_DIR}/bin/activate requirements_test.txt
 	${VIRTUALENV} pip install -r requirements_test.txt && \
 		touch $@
 
