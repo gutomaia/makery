@@ -34,8 +34,20 @@ ${REQUIREMENTS_TXT}: ${CHECKPOINT} ${VIRTUALENV_DIR}/bin/activate requirements_t
 	${CHECK}
 
 python_dependencies: ${REQUIREMENTS}
+
 python_build: python_dependencies
 
 python_test: python_build ${REQUIREMENTS_TXT}
 	${VIRTUALENV} nosetests
 
+python_clean:
+	@rm -rf .checkpoint
+	@find ${PYTHON_MODULES} -regex '^.*py[co]$$' -type f -delete
+	@rm -rf build
+	@rm -rf dist
+	@rm -rf reports
+
+python_purge: python_clean
+	@rm -rf deps
+	@rm -rf tools
+	@rm -rf ${VIRTUALENV_DIR}
