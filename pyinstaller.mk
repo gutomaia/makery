@@ -14,8 +14,13 @@ TOOLS_PATH?=.tools
 TOOLS_CHECK=${TOOLS_PATH}
 
 #files
-PYINSTALLER_ZIP=Pyinstaller-${PYINSTALLER_VERSION}.zip
+PYINSTALLER_ZIP=PyInstaller-${PYINSTALLER_VERSION}.zip
 PYTHON_MSI=python-${PYTHON_VERSION}.msi
+
+#urls
+PYINSTALLER_URL=https://pypi.python.org/packages/source/P/PyInstaller/${PYINSTALLER_ZIP}
+PYTHON_MSI_URL=http://www.python.org/ftp/python/${PYTHON_VERSION}/${PYTHON_MSI}
+DISTRIBUTE_URL=https://bitbucket.org/tarek/distribute/raw/ac7d9b14ac43fecb8b65de548b25773553facaee/distribute_setup.py
 
 #libs
 MSVCP90=${WINE_PATH}/Python27/msvcp90.dll
@@ -46,14 +51,14 @@ ${TOOLS_CHECK}:
 ${DOWNLOAD_PATH}/${PYINSTALLER_ZIP}: ${DOWNLOAD_CHECK}
 	@echo "Downloading ${PYINSTALLER_ZIP}: \c"
 	@cd ${DOWNLOAD_PATH} && \
-		${WGET} http://sourceforge.net/projects/pyinstaller/files/${PYINSTALLER_VERSION}/pyinstaller-${PYINSTALLER_VERSION}.zip && \
+		${WGET} ${PYINSTALLER_URL} && \
 		cd .. && touch $@
 	${CHECK}
 
 ${DOWNLOAD_PATH}/${PYTHON_MSI}: ${DOWNLOAD_CHECK}
 	@echo "Downloading ${PYTHON_MSI}: \c"
 	@cd ${DOWNLOAD_PATH} && \
-		${WGET} http://www.python.org/ftp/python/${PYTHON_VERSION}/python-${PYTHON_VERSION}.msi && \
+		${WGET} ${PYTHON_MSI_URL} && \
 		cd .. && touch $@
 	${CHECK}
 
@@ -80,7 +85,7 @@ ${WINE_PATH}/Python27/Scripts/pywin32_postinstall.py: ${PYTHON_EXE} ${DOWNLOAD_P
 ${DOWNLOAD_PATH}/distribute_setup.py:
 	@echo "Downloading distribute_setup.py: \c"
 	@cd ${DOWNLOAD_PATH} && \
-		${WGET} http://python-distribute.org/distribute_setup.py && \
+		${WGET} ${DISTRIBUTE_URL} && \
 		cd .. && touch $@
 	${CHECK}
 
