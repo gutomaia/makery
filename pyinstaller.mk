@@ -90,12 +90,12 @@ ${DOWNLOAD_PATH}/distribute_setup.py:
 	${CHECK}
 
 ${EASYINSTALL_EXE}: ${PYTHON_EXE} ${DOWNLOAD_PATH}/distribute_setup.py
-	cd ${DOWNLOAD_PATH} && \
+	@cd ${DOWNLOAD_PATH} && \
 		wine ${PYTHON_EXE} distribute_setup.py
 	@touch $@
 
 ${PIP_EXE}: ${EASYINSTALL_EXE}
-	wine ${EASYINSTALL_EXE} pip
+	@wine ${EASYINSTALL_EXE} pip
 	@touch $@
 
 ${PYINSTALLER}: ${TOOLS_CHECK} ${DOWNLOAD_PATH}/${PYINSTALLER_ZIP}
@@ -106,7 +106,7 @@ ${PYINSTALLER}: ${TOOLS_CHECK} ${DOWNLOAD_PATH}/${PYINSTALLER_ZIP}
 	${CHECK}
 
 tools/requirements.windows.check: ${PIP_EXE} requirements.txt
-	wine ${PIP_EXE} install -r requirements.txt
+	@wine ${PIP_EXE} install -r requirements.txt
 	@touch $@
 
 dependencies_wine: ${PYTHON_EXE} ${PIP_EXE}
