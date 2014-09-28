@@ -21,11 +21,11 @@ ${VIRTUALENV_DIR}/bin/activate:
 	@test -d ${VIRTUALENV_DIR} || virtualenv ${VIRTUALENV_DIR} > /dev/null && touch $@
 
 ${REQUIREMENTS}: ${CHECKPOINT} ${VIRTUALENV_DIR}/bin/activate requirements.txt
-	${VIRTUALENV} pip install -r requirements.txt && \
+	${VIRTUALENV} pip install -r requirements.txt --use-mirrors && \
 		touch $@
 
 ${REQUIREMENTS_TEST}: ${CHECKPOINT} ${VIRTUALENV_DIR}/bin/activate requirements_test.txt
-	${VIRTUALENV} pip install -r requirements_test.txt && \
+	${VIRTUALENV} pip install -r requirements_test.txt --use-mirrors && \
 		touch $@
 
 %.pyc: %.py
