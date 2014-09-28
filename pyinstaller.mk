@@ -75,9 +75,14 @@ ${PYTHON_EXE}: ${DOWNLOAD_PATH}/${PYTHON_MSI}
 ${WINE_PATH}/Python27/msvcp90.dll: ${WINE_PATH}/windows/system32/msvcp90.dll
 	@cp $< $@
 
-${WINE_PATH}/Python27/Scripts/pywin32_postinstall.py: ${PYTHON_EXE} ${DOWNLOAD_PATH}/${PYWIN32}
+${EASYINSTALL_EXE}: ${PYTHON_EXE} ${DOWNLOAD_PATH}/distribute_setup.py
 	@cd ${DOWNLOAD_PATH} && \
-		echo wine ${DOWNLOAD_PATH}/${PYWIN32}
+		wine ${PYTHON_EXE} distribute_setup.py
+	@touch $@
+
+${WINE_PATH}/Python27/Scripts/pywin32_postinstall.py: ${EASYINSTALL_EXE} ${DOWNLOAD_PATH}/${PYWIN32}
+	@cd ${DOWNLOAD_PATH} && \
+		echo wine ${EASYINSTALL_EXE} ${DOWNLOAD_PATH}/${PYWIN32}
 	@touch $@
 
 ${DOWNLOAD_PATH}/distribute_setup.py:
@@ -86,11 +91,6 @@ ${DOWNLOAD_PATH}/distribute_setup.py:
 		${WGET} ${DISTRIBUTE_URL} && \
 		cd .. && touch $@
 	${CHECK}
-
-${EASYINSTALL_EXE}: ${PYTHON_EXE} ${DOWNLOAD_PATH}/distribute_setup.py
-	@cd ${DOWNLOAD_PATH} && \
-		wine ${PYTHON_EXE} distribute_setup.py
-	@touch $@
 
 ${PIP_EXE}: ${EASYINSTALL_EXE}
 	@wine ${EASYINSTALL_EXE} pip
