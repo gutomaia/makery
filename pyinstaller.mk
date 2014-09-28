@@ -31,7 +31,12 @@ DISTRIBUTE_URL=https://bitbucket.org/tarek/distribute/raw/ac7d9b14ac43fecb8b65de
 MSVCP90=${DRIVEC_PATH}/Python27/msvcp90.dll
 PYINSTALLER=${TOOLS_PATH}/Pyinstaller-${PYINSTALLER_VERSION}/pyinstaller.py
 
+#checks
+PYWIN32_CHECK=${DRIVEC_PATH}/Python27/Scripts/pywin32_postinstall.py
 
+WINDOWS_BINARIES=${PYWIN32_CHECK}
+
+#executables
 MAKENSIS_EXE=${NSIS_PATH}/makensis.exe
 PYTHON_EXE=${DRIVEC_PATH}/Python27/python.exe
 EASYINSTALL_EXE=${DRIVEC_PATH}/Python27/Scripts/easy_install.exe
@@ -82,7 +87,7 @@ ${EASYINSTALL_EXE}: ${PYTHON_EXE} ${DOWNLOAD_PATH}/distribute_setup.py
 		wine ${PYTHON_EXE} distribute_setup.py
 	@touch $@
 
-${DRIVEC_PATH}/Python27/Scripts/pywin32_postinstall.py: ${EASYINSTALL_EXE} ${DOWNLOAD_PATH}/${PYWIN32}
+${PYWIN32_CHECK}: ${EASYINSTALL_EXE} ${DOWNLOAD_PATH}/${PYWIN32}
 	@wine ${EASYINSTALL_EXE} ${DOWNLOAD_PATH}/${PYWIN32} && touch $@
 
 ${DOWNLOAD_PATH}/distribute_setup.py:
@@ -107,8 +112,6 @@ ${TOOLS_PATH}/requirements.windows.check: ${PIP_EXE} requirements.txt
 	@wine ${PIP_EXE} install -r requirements.txt
 	@touch $@
 
-windows_binary_dependencies: ${DRIVEC_PATH}/Python27/Scripts/pywin32_postinstall.py
-
 dist/linux/pynes: build ${PYINSTALLER}
 	@rm -rf build/pyi.linux
 	@rm -rf build/pyi.linux2
@@ -116,7 +119,7 @@ dist/linux/pynes: build ${PYINSTALLER}
 	python ${PYINSTALLER} pynes.linux.spec
 	@touch $@
 
-dist/windows/pynes.exe: ${PYINSTALLER} ${PYTHON_EXE} windows_binary_dependencies ${TOOLS_PATH}/requirements.windows.check
+dist/windows/pynes.exe: ${PYINSTALLER} ${PYTHON_EXE} ${WINDOWS_BINARIES} ${TOOLS_PATH}/requirements.windows.check
 	@rm -rf build/pyi.win32
 	@rm -rf dist/windows
 	wine ${PYTHON_EXE} ${PYINSTALLER} --onefile pynes.windows.spec
@@ -126,20 +129,20 @@ pyinstaller_linux: dist/linux/pynes
 
 pyinstaller_windows: dist/windows/pynes.exe
 
-deps/nsis-3.0a1-setup.exe:
+${DOWNLOAD_PATH}/nsis-3.0a1-setup.exe:
 	@echo "Downloading NSIS \c"
-	@cd deps && \
+	@cd ${DOWNLOAD_PATH} && \
 		${WGET} http://downloads.sourceforge.net/project/nsis/NSIS%203%20Pre-release/3.0a1/nsis-3.0a1-setup.exe
 	@touch "$@"
 	${CHECK}
 
-${MAKENSIS_EXE}: deps/nsis-3.0a1-setup.exe
-	@echo "Installing NSIS \c"
-	@wine deps/nsis-3.0a1-setup.exe /S /D=C:\\NSIS
+${MAKENSIS_EXE}: ${DOWNLOAD_PATH}/nsis-3.0a1-setup.exe
+	@echo "Installing NSIS: \c"
+	@wine ${DOWNLOAD_PATH}/nsis-3.0a1-setup.exe /S /D=C:\\NSIS
 	@touch "$@"
 	${CHECK}
 
-nsis: ${MAKENSIS_EXE} pyinstaller_windows
+nsis: ${MAKENSIS_EXE}
 	@wine ${MAKENSIS_EXE} installer.nsi
 
 pyinstaller_wizzard: nsis
