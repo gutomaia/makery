@@ -50,7 +50,7 @@ ${DOWNLOAD_CHECK}:
 
 ${TOOLS_CHECK}:
 	@echo "Creating tools dir: \c"
-	@mkdir -p ${TOOL_PATH} touch $@
+	@mkdir -p ${TOOL_PATH} && touch $@
 	${CHECK}
 
 ${DOWNLOAD_PATH}/${PYINSTALLER_ZIP}: ${DOWNLOAD_CHECK}
