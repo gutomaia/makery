@@ -29,7 +29,7 @@ DISTRIBUTE_URL=https://bitbucket.org/tarek/distribute/raw/ac7d9b14ac43fecb8b65de
 
 #libs
 MSVCP90=${DRIVEC_PATH}/Python27/msvcp90.dll
-PYINSTALLER=${TOOLS_PATH}/Pyinstaller-${PYINSTALLER_VERSION}/pyinstaller.py
+PYINSTALLER=${TOOLS_PATH}/PyInstaller-${PYINSTALLER_VERSION}/pyinstaller.py
 
 #checks
 PYWIN32_CHECK=${DRIVEC_PATH}/Python27/Scripts/pywin32_postinstall.py
