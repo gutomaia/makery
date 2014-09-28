@@ -12,28 +12,30 @@ DOWNLOAD_PATH?=.downloads
 DOWNLOAD_CHECK=${DOWNLOAD_PATH}/.done
 TOOLS_PATH?=.tools
 TOOLS_CHECK=${TOOLS_PATH}
+WINE_PATH=~/.wine
+DRIVEC_PATH=${WINE_PATH}/drive_c
+NSIS_PATH=${DRIVEC_PATH}/NSIS
 
 #files
 PYINSTALLER_ZIP=PyInstaller-${PYINSTALLER_VERSION}.zip
 PYTHON_MSI=python-${PYTHON_VERSION}.msi
+PYWIN32=pywin32-${PYWIN32_VERSION}.win32-py2.7.exe
 
 #urls
 PYINSTALLER_URL=https://pypi.python.org/packages/source/P/PyInstaller/${PYINSTALLER_ZIP}
 PYTHON_MSI_URL=http://www.python.org/ftp/python/${PYTHON_VERSION}/${PYTHON_MSI}
+PYWIN32_URL=http://downloads.sourceforge.net/project/pywin32/pywin32/Build\%20${PYWIN32_VERSION}/${PYWIN32}
 DISTRIBUTE_URL=https://bitbucket.org/tarek/distribute/raw/ac7d9b14ac43fecb8b65de548b25773553facaee/distribute_setup.py
 
 #libs
-MSVCP90=${WINE_PATH}/Python27/msvcp90.dll
+MSVCP90=${DRIVEC_PATH}/Python27/msvcp90.dll
 PYINSTALLER=${TOOLS_PATH}/Pyinstaller-${PYINSTALLER_VERSION}/pyinstaller.py
-PYWIN32=pywin32-${PYWIN32_VERSION}.win32-py2.7.exe
 
-WINE_PATH=~/.wine/drive_c
-NSIS_PATH=${WINE_PATH}/NSIS
+
 MAKENSIS_EXE=${NSIS_PATH}/makensis.exe
-
-PYTHON_EXE=${WINE_PATH}/Python27/python.exe
-EASYINSTALL_EXE=${WINE_PATH}/Python27/Scripts/easy_install.exe
-PIP_EXE=${WINE_PATH}/Python27/Scripts/pip.exe
+PYTHON_EXE=${DRIVEC_PATH}/Python27/python.exe
+EASYINSTALL_EXE=${DRIVEC_PATH}/Python27/Scripts/easy_install.exe
+PIP_EXE=${DRIVEC_PATH}/Python27/Scripts/pip.exe
 
 
 ${DOWNLOAD_CHECK}:
@@ -63,7 +65,7 @@ ${DOWNLOAD_PATH}/${PYTHON_MSI}: ${DOWNLOAD_CHECK}
 ${DOWNLOAD_PATH}/${PYWIN32}: ${DOWNLOAD_CHECK}
 	@echo "Downloading python-${PYTHON_VERSION}.msi: \c"
 	@cd ${DOWNLOAD_PATH} && \
-		${WGET} http://downloads.sourceforge.net/project/pywin32/pywin32/Build\%20${PYWIN32_VERSION}/${PYWIN32} && \
+		${WGET} ${PYWIN32_URL} && \
 		touch ${PYWIN32}
 	${CHECK}
 
@@ -72,7 +74,7 @@ ${PYTHON_EXE}: ${DOWNLOAD_PATH}/${PYTHON_MSI}
 		msiexec /i ${PYTHON_MSI} /qb
 	@touch $@
 
-${WINE_PATH}/Python27/msvcp90.dll: ${WINE_PATH}/windows/system32/msvcp90.dll
+${DRIVEC_PATH}/Python27/msvcp90.dll: ${DRIVEC_PATH}/windows/system32/msvcp90.dll
 	@cp $< $@
 
 ${EASYINSTALL_EXE}: ${PYTHON_EXE} ${DOWNLOAD_PATH}/distribute_setup.py
@@ -80,10 +82,8 @@ ${EASYINSTALL_EXE}: ${PYTHON_EXE} ${DOWNLOAD_PATH}/distribute_setup.py
 		wine ${PYTHON_EXE} distribute_setup.py
 	@touch $@
 
-${WINE_PATH}/Python27/Scripts/pywin32_postinstall.py: ${EASYINSTALL_EXE} ${DOWNLOAD_PATH}/${PYWIN32}
-	@cd ${DOWNLOAD_PATH} && \
-		echo wine ${EASYINSTALL_EXE} ${DOWNLOAD_PATH}/${PYWIN32}
-	@touch $@
+${DRIVEC_PATH}/Python27/Scripts/pywin32_postinstall.py: ${EASYINSTALL_EXE} ${DOWNLOAD_PATH}/${PYWIN32}
+	@wine ${EASYINSTALL_EXE} ${DOWNLOAD_PATH}/${PYWIN32} && touch $@
 
 ${DOWNLOAD_PATH}/distribute_setup.py:
 	@echo "Downloading distribute_setup.py: \c"
@@ -103,22 +103,20 @@ ${PYINSTALLER}: ${TOOLS_CHECK} ${DOWNLOAD_PATH}/${PYINSTALLER_ZIP}
 		cd .. && touch $@
 	${CHECK}
 
-tools/requirements.windows.check: ${PIP_EXE} requirements.txt
+${TOOLS_PATH}/requirements.windows.check: ${PIP_EXE} requirements.txt
 	@wine ${PIP_EXE} install -r requirements.txt
 	@touch $@
 
-dependencies_wine: ${PYTHON_EXE} ${PIP_EXE}
+windows_binary_dependencies: ${DRIVEC_PATH}/Python27/Scripts/pywin32_postinstall.py
 
-windows_binary_dependencies: ${WINE_PATH}/Python27/Scripts/pywin32_postinstall.py
-
-dist/linux/pynes: build ${PYINSTALLER} tools/requirements.windows.check
+dist/linux/pynes: build ${PYINSTALLER}
 	@rm -rf build/pyi.linux
 	@rm -rf build/pyi.linux2
 	@rm -rf dist/linux
 	python ${PYINSTALLER} pynes.linux.spec
 	@touch $@
 
-dist/windows/pynes.exe: ${PYINSTALLER} ${PYTHON_EXE} windows_binary_dependencies tools/requirements.windows.check
+dist/windows/pynes.exe: ${PYINSTALLER} ${PYTHON_EXE} windows_binary_dependencies ${TOOLS_PATH}/requirements.windows.check
 	@rm -rf build/pyi.win32
 	@rm -rf dist/windows
 	wine ${PYTHON_EXE} ${PYINSTALLER} --onefile pynes.windows.spec
