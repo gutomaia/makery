@@ -24,7 +24,7 @@ DISTRIBUTE_URL=https://bitbucket.org/tarek/distribute/raw/ac7d9b14ac43fecb8b65de
 
 #libs
 MSVCP90=${WINE_PATH}/Python27/msvcp90.dll
-PYINSTALLER=tools/pyinstaller-${PYINSTALLER_VERSION}/pyinstaller.py
+PYINSTALLER=${TOOLS_PATH}/Pyinstaller-${PYINSTALLER_VERSION}/pyinstaller.py
 PYWIN32=pywin32-${PYWIN32_VERSION}.win32-py2.7.exe
 
 WINE_PATH=~/.wine/drive_c
@@ -38,14 +38,12 @@ PIP_EXE=${WINE_PATH}/Python27/Scripts/pip.exe
 
 ${DOWNLOAD_CHECK}:
 	@echo "Creating dependencies dir: \c"
-	@mkdir -p ${DOWNLOAD_PATH}
-	@touch $@
+	@mkdir -p ${DOWNLOAD_PATH} && touch $@
 	${CHECK}
 
 ${TOOLS_CHECK}:
 	@echo "Creating tools dir: \c"
-	@mkdir -p tools
-	@touch $@
+	@mkdir -p ${TOOL_PATH} touch $@
 	${CHECK}
 
 ${DOWNLOAD_PATH}/${PYINSTALLER_ZIP}: ${DOWNLOAD_CHECK}
@@ -99,8 +97,8 @@ ${PIP_EXE}: ${EASYINSTALL_EXE}
 	@touch $@
 
 ${PYINSTALLER}: ${TOOLS_CHECK} ${DOWNLOAD_PATH}/${PYINSTALLER_ZIP}
-	@echo "Unzipping PyInstaller ${PYINSTALLER_VERSION}: \c"
-	@cd tools && \
+	@echo "Unzipping ${PYINSTALLER_ZIP}: \c"
+	@cd ${TOOLS_PATH} && \
 		unzip -qq ../${DOWNLOAD_PATH}/${PYINSTALLER_ZIP} && \
 		cd .. && touch $@
 	${CHECK}
