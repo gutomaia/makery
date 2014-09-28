@@ -128,8 +128,6 @@ pyinstaller_linux: dist/linux/pynes
 
 pyinstaller_windows: dist/windows/pynes.exe
 
-dist: linux windows
-
 deps/nsis-3.0a1-setup.exe:
 	@echo "Downloading NSIS \c"
 	@cd deps && \
