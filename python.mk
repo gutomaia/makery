@@ -1,6 +1,7 @@
 VIRTUALENV_DIR?=venv
 VIRTUALENV_ARGS?=
-VIRTUALENV=@. ${VIRTUALENV_DIR}/bin/activate;
+VIRTUALENV_CMD=${VIRTUALENV_DIR/bin/activate}
+VIRTUALENV=@. ${VIRTUALENV_CMD};
 
 PYTHON_MODULES?=${shell find}
 
@@ -18,7 +19,7 @@ python_default: python_test
 ${CHECKPOINT}:
 	@mkdir .checkpoint && touch $@
 
-${VIRTUALENV_DIR}/bin/activate:
+${VIRTUALENV_CMD}:
 	@test -d ${VIRTUALENV_DIR} || virtualenv ${VIRTUALENV_ARGS} ${VIRTUALENV_DIR} > /dev/null && touch $@
 
 ${REQUIREMENTS}: ${CHECKPOINT} ${VIRTUALENV_DIR}/bin/activate requirements.txt
