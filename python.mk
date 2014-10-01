@@ -39,7 +39,7 @@ python_dependencies: ${REQUIREMENTS}
 
 python_build: python_dependencies
 
-python_test: python_build ${REQUIREMENTS}
+python_test: python_build ${REQUIREMENTS_TEST}
 	${VIRTUALENV} nosetests
 
 python_clean:
