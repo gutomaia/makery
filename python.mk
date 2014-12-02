@@ -3,6 +3,8 @@ VIRTUALENV_ARGS?=
 VIRTUALENV_CMD=${VIRTUALENV_DIR}/bin/activate
 VIRTUALENV=@. ${VIRTUALENV_CMD};
 
+PIP_EXTRA_PARAMS?=
+
 PYTHON_MODULES?=${shell find}
 
 PYTHON_SOURCES?=${shell find ${PYTHON_MODULES} -type f -iname '*.py'}
@@ -23,11 +25,11 @@ ${VIRTUALENV_CMD}:
 	@test -d ${VIRTUALENV_DIR} || virtualenv ${VIRTUALENV_ARGS} ${VIRTUALENV_DIR} > /dev/null && touch $@
 
 ${REQUIREMENTS}: ${CHECKPOINT} ${VIRTUALENV_CMD} requirements.txt
-	${VIRTUALENV} pip install -r requirements.txt && \
+	${VIRTUALENV} pip install -r requirements.txt ${PIP_EXTRA_PARAMS} && \
 		touch $@
 
 ${REQUIREMENTS_TEST}: ${CHECKPOINT} ${VIRTUALENV_CMD} requirements_test.txt
-	${VIRTUALENV} pip install -r requirements_test.txt && \
+	${VIRTUALENV} pip install -r requirements_test.txt ${PIP_EXTRA_PARAMS} && \
 		touch $@
 
 %.pyc: %.py
