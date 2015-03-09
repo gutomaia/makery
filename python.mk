@@ -24,7 +24,10 @@ ${CHECKPOINT}:
 ${VIRTUALENV_CMD}:
 	@test -d ${VIRTUALENV_DIR} || virtualenv ${VIRTUALENV_ARGS} ${VIRTUALENV_DIR} > /dev/null && touch $@
 
-${REQUIREMENTS}: ${CHECKPOINT} ${VIRTUALENV_CMD} requirements.txt
+${CHECKPOINT_DIR}/.upgrade_pip: ${CHECKPOINT} ${VIRTUALENV_CMD}
+	${VIRTUALENV} pip install --upgrade pip && touch $@
+
+${REQUIREMENTS}: ${CHECKPOINT_DIR}/.upgrade_pip requirements.txt
 	${VIRTUALENV} pip install -r requirements.txt ${PIP_EXTRA_PARAMS} && \
 		touch $@
 
