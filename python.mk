@@ -43,7 +43,7 @@ ${REQUIREMENTS_TEST}: ${CHECKPOINT} ${VIRTUALENV_CMD} requirements_test.txt
 
 python_dependencies: ${REQUIREMENTS}
 
-${CHECKPOINT_DIR}/wheel.check: ${REQUIREMENTS}
+${CHECKPOINT_DIR}/wheel.check: ${CHECKPOINT_DIR}/.upgrade_pip
 	${VIRTUALENV} pip install --upgrade wheel && touch $@
 
 python_build: python_dependencies
