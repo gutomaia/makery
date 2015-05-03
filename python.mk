@@ -12,6 +12,7 @@ PYTHON_COMPILED?= $(patsubst %.py,%.pyc, ${PYTHON_SOURCES})
 
 CHECKPOINT_DIR?=.checkpoint
 CHECKPOINT=${CHECKPOINT_DIR}/python.check
+CHECKPOINT=${CHECKPOINT_DIR}/wheel.check
 
 REQUIREMENTS=${CHECKPOINT_DIR}/requirements.txt
 REQUIREMENTS_TEST=${CHECKPOINT_DIR}/requirements_test.txt
@@ -42,6 +43,9 @@ ${REQUIREMENTS_TEST}: ${CHECKPOINT} ${VIRTUALENV_CMD} requirements_test.txt
 
 python_dependencies: ${REQUIREMENTS}
 
+${CHECKPOINT_DIR}/wheel.check: ${REQUIREMENTS}
+	${VIRTUALENV} pip install --upgrade wheel && touch $@
+
 python_build: python_dependencies
 
 python_test: python_build ${REQUIREMENTS_TEST}
@@ -62,5 +66,5 @@ python_purge: python_clean
 python_egg: setup.py ${PYTHON_COMPILED}
 	${VIRTUALENV} python setup.py bdist_egg --exclude-source-files > /dev/null
 
-python_wheel: setup.py ${PYTHON_COMPILED} ${REQUIREMENTS_TEST}
+python_wheel: setup.py ${PYTHON_COMPILED} ${CHECKPOINT_DIR}/wheel.check
 	${VIRTUALENV} python setup.py bdist_wheel > /dev/null
