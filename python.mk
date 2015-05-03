@@ -11,8 +11,7 @@ PYTHON_SOURCES?=${shell find ${PYTHON_MODULES} -type f -iname '*.py'}
 PYTHON_COMPILED?= $(patsubst %.py,%.pyc, ${PYTHON_SOURCES})
 
 CHECKPOINT_DIR?=.checkpoint
-CHECKPOINT=${CHECKPOINT_DIR}/python.check
-CHECKPOINT=${CHECKPOINT_DIR}/wheel.check
+CHECKPOINT=${CHECKPOINT_DIR}/python_mk.check
 
 REQUIREMENTS=${CHECKPOINT_DIR}/requirements.txt
 REQUIREMENTS_TEST=${CHECKPOINT_DIR}/requirements_test.txt
@@ -20,7 +19,7 @@ REQUIREMENTS_TEST=${CHECKPOINT_DIR}/requirements_test.txt
 python_default: python_test
 
 ${CHECKPOINT}:
-	@mkdir .checkpoint && touch $@
+	@mkdir ${CHECKPOINT_DIR} && touch $@
 
 ${VIRTUALENV_CMD}:
 	@test -d ${VIRTUALENV_DIR} || virtualenv ${VIRTUALENV_ARGS} ${VIRTUALENV_DIR} > /dev/null && touch $@
