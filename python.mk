@@ -54,6 +54,7 @@ python_clean:
 	@rm -rf ${CHECKPOINT_DIR}
 	@find ${PYTHON_MODULES} -regex '^.*py[co]$$' -type f -delete
 	@rm -rf build
+	@rm -rf *.egg-info
 	@rm -rf dist
 	@rm -rf reports
 
