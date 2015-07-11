@@ -98,7 +98,7 @@ ${DOWNLOAD_PATH}/distribute_setup.py:
 	${CHECK}
 
 ${PIP_EXE}: ${EASYINSTALL_EXE}
-	@wine ${EASYINSTALL_EXE} pip
+	@test -f ${PIP_EXE} || wine ${EASYINSTALL_EXE} pip
 	@touch $@
 
 ${PYINSTALLER}: ${TOOLS_CHECK} ${DOWNLOAD_PATH}/${PYINSTALLER_ZIP}
@@ -109,7 +109,8 @@ ${PYINSTALLER}: ${TOOLS_CHECK} ${DOWNLOAD_PATH}/${PYINSTALLER_ZIP}
 	${CHECK}
 
 ${TOOLS_PATH}/requirements.windows.check: ${PIP_EXE} requirements.txt
-	@wine ${PIP_EXE} install -r requirements.txt
+	@echo wine ${PIP_EXE} install -r requirements.txt
+	@wine ${PIP_EXE} install -r requirements.txt || wine ${PYTHON_EXE} -m pip install -r requirements.txt
 	@touch $@
 
 dist/linux/pynes: build ${PYINSTALLER}
