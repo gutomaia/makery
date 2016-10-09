@@ -47,6 +47,9 @@ ${CHECKPOINT_DIR}/wheel.check: ${CHECKPOINT_DIR}/.upgrade_pip
 
 python_build: python_dependencies
 
+${CHECKPOINT_DIR}/.python_develop: setup.py
+    ${VIRTUALENV} python setup.py develop && touch $@
+
 python_test: python_build ${REQUIREMENTS_TEST}
 	${VIRTUALENV} nosetests
 
