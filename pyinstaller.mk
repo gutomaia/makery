@@ -108,42 +108,7 @@ ${PYINSTALLER}: ${TOOLS_CHECK} ${DOWNLOAD_PATH}/${PYINSTALLER_ZIP}
 		cd .. && touch $@
 	${CHECK}
 
-${TOOLS_PATH}/requirements.windows.check: ${PIP_EXE} requirements.txt
+${TOOLS_PATH}/requirements.windows.check: ${PYTHON_EXE} requirements.txt
 	@echo wine ${PIP_EXE} install -r requirements.txt
 	@wine ${PIP_EXE} install -r requirements.txt || wine ${PYTHON_EXE} -m pip install -r requirements.txt
 	@touch $@
-
-dist/linux/pynes: build ${PYINSTALLER}
-	@rm -rf build/pyi.linux
-	@rm -rf build/pyi.linux2
-	@rm -rf dist/linux
-	python ${PYINSTALLER} pynes.linux.spec
-	@touch $@
-
-dist/windows/pynes.exe: ${PYINSTALLER} ${PYTHON_EXE} ${WINDOWS_BINARIES} ${TOOLS_PATH}/requirements.windows.check
-	@rm -rf build/pyi.win32
-	@rm -rf dist/windows
-	wine ${PYTHON_EXE} ${PYINSTALLER} --onefile pynes.windows.spec
-	@touch $@
-
-pyinstaller_linux: dist/linux/pynes
-
-pyinstaller_windows: dist/windows/pynes.exe
-
-${DOWNLOAD_PATH}/nsis-3.0a1-setup.exe:
-	@echo "Downloading NSIS \c"
-	@cd ${DOWNLOAD_PATH} && \
-		${WGET} http://downloads.sourceforge.net/project/nsis/NSIS%203%20Pre-release/3.0a1/nsis-3.0a1-setup.exe
-	@touch "$@"
-	${CHECK}
-
-${MAKENSIS_EXE}: ${DOWNLOAD_PATH}/nsis-3.0a1-setup.exe
-	@echo "Installing NSIS: \c"
-	@wine ${DOWNLOAD_PATH}/nsis-3.0a1-setup.exe /S /D=C:\\NSIS
-	@touch "$@"
-	${CHECK}
-
-nsis: ${MAKENSIS_EXE}
-	@wine ${MAKENSIS_EXE} installer.nsi
-
-pyinstaller_wizzard: nsis
