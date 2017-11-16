@@ -19,27 +19,20 @@ NSIS_PATH=${DRIVEC_PATH}/NSIS
 #files
 PYINSTALLER_ZIP=PyInstaller-${PYINSTALLER_VERSION}.zip
 PYTHON_MSI=python-${PYTHON_VERSION}.msi
-PYWIN32=pywin32-${PYWIN32_VERSION}.win32-py2.7.exe
 
 #urls
 PYINSTALLER_URL=https://pypi.python.org/packages/source/P/PyInstaller/${PYINSTALLER_ZIP}
 PYTHON_MSI_URL=http://www.python.org/ftp/python/${PYTHON_VERSION}/${PYTHON_MSI}
-PYWIN32_URL=http://downloads.sourceforge.net/project/pywin32/pywin32/Build\%20${PYWIN32_VERSION}/${PYWIN32}
-DISTRIBUTE_URL=https://bitbucket.org/tarek/distribute/raw/ac7d9b14ac43fecb8b65de548b25773553facaee/distribute_setup.py
 
 #libs
 MSVCP90=${DRIVEC_PATH}/Python27/msvcp90.dll
 PYINSTALLER=${TOOLS_PATH}/PyInstaller-${PYINSTALLER_VERSION}/pyinstaller.py
-
-#checks
-PYWIN32_CHECK=${DRIVEC_PATH}/Python27/Scripts/pywin32_postinstall.py
 
 WINDOWS_BINARIES=${PYWIN32_CHECK}
 
 #executables
 MAKENSIS_EXE=${NSIS_PATH}/makensis.exe
 PYTHON_EXE=${DRIVEC_PATH}/Python27/python.exe
-EASYINSTALL_EXE=${DRIVEC_PATH}/Python27/Scripts/easy_install.exe
 PIP_EXE=${DRIVEC_PATH}/Python27/Scripts/pip.exe
 
 
@@ -67,13 +60,6 @@ ${DOWNLOAD_PATH}/${PYTHON_MSI}: ${DOWNLOAD_CHECK}
 		cd .. && touch $@
 	${CHECK}
 
-${DOWNLOAD_PATH}/${PYWIN32}: ${DOWNLOAD_CHECK}
-	@echo "Downloading python-${PYTHON_VERSION}.msi: \c"
-	@cd ${DOWNLOAD_PATH} && \
-		${WGET} ${PYWIN32_URL} && \
-		touch ${PYWIN32}
-	${CHECK}
-
 ${PYTHON_EXE}: ${DOWNLOAD_PATH}/${PYTHON_MSI}
 	@cd ${DOWNLOAD_PATH} && \
 		msiexec /i ${PYTHON_MSI} /qb
@@ -82,26 +68,11 @@ ${PYTHON_EXE}: ${DOWNLOAD_PATH}/${PYTHON_MSI}
 ${DRIVEC_PATH}/Python27/msvcp90.dll: ${DRIVEC_PATH}/windows/system32/msvcp90.dll
 	@cp $< $@
 
-${EASYINSTALL_EXE}: ${PYTHON_EXE} ${DOWNLOAD_PATH}/distribute_setup.py
-	@cd ${DOWNLOAD_PATH} && \
-		wine ${PYTHON_EXE} distribute_setup.py
-	@touch $@
+${CHECKPOINT_DIR}/pypiwin32.check: ${PYTHON_EXE} ${CHECKPOINT}
+	@wine ${PIP_EXE} install pypiwin32 || wine ${PYTHON_EXE} -m pip install pypiwin32
+	touch $@
 
-${PYWIN32_CHECK}: ${EASYINSTALL_EXE} ${DOWNLOAD_PATH}/${PYWIN32}
-	@wine ${EASYINSTALL_EXE} ${DOWNLOAD_PATH}/${PYWIN32} && touch $@
-
-${DOWNLOAD_PATH}/distribute_setup.py:
-	@echo "Downloading distribute_setup.py: \c"
-	@cd ${DOWNLOAD_PATH} && \
-		${WGET} ${DISTRIBUTE_URL} && \
-		cd .. && touch $@
-	${CHECK}
-
-${PIP_EXE}: ${EASYINSTALL_EXE}
-	@test -f ${PIP_EXE} || wine ${EASYINSTALL_EXE} pip
-	@touch $@
-
-${PYINSTALLER}: ${TOOLS_CHECK} ${DOWNLOAD_PATH}/${PYINSTALLER_ZIP}
+${PYINSTALLER}: ${TOOLS_CHECK} ${DOWNLOAD_PATH}/${PYINSTALLER_ZIP} ${CHECKPOINT_DIR}/pypiwin32.check
 	@echo "Unzipping ${PYINSTALLER_ZIP}: \c"
 	@cd ${TOOLS_PATH} && \
 		unzip -qq ../${DOWNLOAD_PATH}/${PYINSTALLER_ZIP} && \
