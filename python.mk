@@ -19,7 +19,7 @@ REQUIREMENTS_TEST=${CHECKPOINT_DIR}/requirements_test.txt
 python_default: python_test
 
 ${CHECKPOINT}:
-	@mkdir ${CHECKPOINT_DIR} && touch $@
+	@mkdir -p ${CHECKPOINT_DIR} && touch $@
 
 ${VIRTUALENV_CMD}:
 	@test -d ${VIRTUALENV_DIR} || virtualenv ${VIRTUALENV_ARGS} ${VIRTUALENV_DIR} > /dev/null && touch $@
