@@ -75,7 +75,7 @@ ${CHECKPOINT_DIR}/pypiwin32.check: ${PYTHON_EXE} ${CHECKPOINT}
 ${PYINSTALLER}: ${TOOLS_CHECK} ${DOWNLOAD_PATH}/${PYINSTALLER_ZIP} ${CHECKPOINT_DIR}/pypiwin32.check
 	@echo "Unzipping ${PYINSTALLER_ZIP}: \c"
 	@cd ${TOOLS_PATH} && \
-		unzip -qq ../${DOWNLOAD_PATH}/${PYINSTALLER_ZIP} && \
+		unzip -qq -o ../${DOWNLOAD_PATH}/${PYINSTALLER_ZIP} && \
 		cd .. && touch $@
 	${CHECK}
 
