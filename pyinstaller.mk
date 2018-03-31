@@ -2,7 +2,7 @@
 
 PLATFORM?=$(shell uname)
 PYTHON_VERSION?=2.7.9
-PYWIN32_VERSION?=218
+PYWIN32_VERSION?=219
 PYINSTALLER_VERSION?=3.1
 SETUPTOOLS_VERSION?=0.6c11
 
@@ -69,7 +69,7 @@ ${DRIVEC_PATH}/Python27/msvcp90.dll: ${DRIVEC_PATH}/windows/system32/msvcp90.dll
 	@cp $< $@
 
 ${CHECKPOINT_DIR}/pypiwin32.check: ${PYTHON_EXE} ${CHECKPOINT}
-	@wine ${PIP_EXE} install pypiwin32 || wine ${PYTHON_EXE} -m pip install pypiwin32
+	@wine ${PIP_EXE} install pypiwin32==${PYWIN32_VERSION} || wine ${PYTHON_EXE} -m pip install pypiwin32==${PYWIN32_VERSION}
 	touch $@
 
 ${PYINSTALLER}: ${TOOLS_CHECK} ${DOWNLOAD_PATH}/${PYINSTALLER_ZIP} ${CHECKPOINT_DIR}/pypiwin32.check
