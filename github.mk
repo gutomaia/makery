@@ -1,13 +1,23 @@
 
 PROJECT_NAME?=Project
 PROJECT_TAG?=project
+PLATFORM?=$(shell uname)
+
+
+ifeq "Darwin" "${PLATFORM}"
+GREP_ARGS = -e '\* \d\+\.\d\+\.x'
+endif
+
+ifeq "Linux" "${PLATFORM}"
+GREP_ARGS = -P '\* \d+\.\d+\.x'
+endif
 
 VERSION.txt:
 	echo '0.0.0' > VERSION.txt
 
 before-tag:
 	@rm -f /tmp/.${PROJECT_TAG}_commitMSG | echo "OK"
-	@git branch | grep -P '\* \d+\.\d+\.x' || (echo "You must be in a version branch" && exit 1)
+	@git branch | grep ${GREP_ARGS} || (echo "You must be in a version branch" && exit 1)
 	@#TODO: you must be on a branch that matches the version
 	@#TODO: you must be synced with the remote branch
 
