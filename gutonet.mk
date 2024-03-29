@@ -18,6 +18,9 @@ MAKERY_REPOSITORY_BRANCH?=main
 MAKERY_BASE_URL?=https://raw.githubusercontent.com/${MAKERY_REPOSITORY}/${MAKERY_REPOSITORY_BRANCH}
 DEFAULT_BEHAVIOR?=test code_check
 
+FLAKE8_IGNORE?=W503,E203
+FLAKE8_ARGS?=--ignore=${FLAKE8_IGNORE} --per-file-ignores=\*/__init__.py\:F401,F403
+
 ifeq "true" "${shell test -d docs && echo true}"
 DOCS_RST?=${shell find docs -type f -iname '*.rst'} docs/requirements_licenses.rst docs/requirements_dev_licenses.rst
 else
@@ -70,7 +73,7 @@ codestyle_check: ${REQUIREMENTS_TEST}
 	${VIRTUALENV} pycodestyle ${PYTHON_MODULES} | sort -rn || echo ''
 
 flake_check: ${REQUIREMENTS_TEST}
-	${VIRTUALENV} flake8 ${PYTHON_MODULES} --ignore=W503 --per-file-ignores=\*/__init__.py\:F401,F403
+	${VIRTUALENV} flake8 ${PYTHON_MODULES} ${FLAKE8_ARGS}
 
 blue_check: ${REQUIREMENTS_TEST}
 	${VIRTUALENV} blue --check ${PYTHON_MODULES}
