@@ -17,12 +17,14 @@ MAKERY_REPOSITORY?=gutomaia/gutonet-makery
 MAKERY_REPOSITORY_BRANCH?=main
 MAKERY_BASE_URL?=https://raw.githubusercontent.com/${MAKERY_REPOSITORY}/${MAKERY_REPOSITORY_BRANCH}
 DEFAULT_BEHAVIOR?=test code_check
+CHANGELOG_FILE?=CHANGELOG.md
+CHANGELOG_DOC?=docs/changelog.rst
 
 FLAKE8_IGNORE?=W503,E203
 FLAKE8_ARGS?=--ignore=${FLAKE8_IGNORE} --per-file-ignores=\*/__init__.py\:F401,F403
 
 ifeq "true" "${shell test -d docs && echo true}"
-DOCS_RST?=${shell find docs -type f -iname '*.rst'} docs/requirements_licenses.rst docs/requirements_dev_licenses.rst
+DOCS_RST?=${shell find docs -type f -iname '*.rst'} docs/requirements_licenses.rst docs/requirements_dev_licenses.rst ${CHANGELOG_DOC}
 else
 DOCS_RST?=
 endif
@@ -119,9 +121,16 @@ tdd: ${REQUIREMENTS_TEST}
 tox: ${REQUIREMENTS_TEST}
 	${VIRTUALENV} tox
 
-docs/changelog.rst: CHANGELOG.md ${REQUIREMENTS_TEST}
-	${VIRTUALENV} m2r CHANGELOG.md
-	mv CHANGELOG.rst $@
+${CHANGELOG_FILE}:
+	@echo "Create changelog file (${CHANGELOG_FILE}): \c"
+	${VIRTUALENV} git-changelog -c angular . -o ${CHANGELOG_FILE}
+	${CHECK}
+
+${CHANGELOG_DOC}: ${CHANGELOG_FILE} ${REQUIREMENTS_TEST}
+	@echo "Create changelog doc (${CHANGELOG_DOC}): \c"
+	${VIRTUALENV} m2r ${CHANGELOG_FILE}
+	@mv CHANGELOG.rst $@
+	${CHECK}
 
 docs/requirements_licenses.rst: pyproject.toml
 	@echo "Create requirements_venv at docs/_build: \c"
