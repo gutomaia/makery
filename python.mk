@@ -90,7 +90,7 @@ endif
 python_clean:
 	@rm -rf ${CHECKPOINT_DIR}
 	@find ${PYTHON_MODULES} -regex '^.*py[co]$$' -type f -delete
-	@find ${PYTHON_MODULES} -name __pycache__ -type d -delete
+	@find ${PYTHON_MODULES} -name __pycache__ -type d | xargs rm -rf
 	@rm -rf build
 	@rm -rf *.egg-info
 	@rm -rf dist
