@@ -105,10 +105,10 @@ python_purge: python_clean
 
 ifeq "true" "${shell test -f pyproject.toml && echo true}"
 
-python_egg: pyproject.toml ${PYTHON_COMPILED} ${CHECKPOINT}/.poetry
+python_egg: pyproject.toml ${PYTHON_COMPILED} ${CHECKPOINT_DIR}/.poetry
 	${VIRTUALENV} poetry build -f sdist
 
-python_wheel: pyproject.toml ${PYTHON_COMPILED} ${CHECKPOINT}/.poetry
+python_wheel: pyproject.toml ${PYTHON_COMPILED} ${CHECKPOINT_DIR}/.poetry
 	${VIRTUALENV} poetry build -f wheel
 
 python_spec_wheel: setup_spec.py ${PYTHON_COMPILED} ${CHECKPOINT_DIR}/wheel.check
