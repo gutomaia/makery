@@ -54,6 +54,7 @@ ${REQUIREMENTS}: ${CHECKPOINT} ${VIRTUALENV_ACTIVATE} ${CHECKPOINT_DIR}/.poetry 
 	${VIRTUALENV} poetry install && touch $@
 
 ${REQUIREMENTS_TEST}: ${REQUIREMENTS}
+	touch $@
 
 python_dependencies: ${REQUIREMENTS}
 
