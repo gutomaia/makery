@@ -22,6 +22,7 @@ CHANGELOG_DOC?=docs/changelog.rst
 
 FLAKE8_IGNORE?=W503,E203
 FLAKE8_ARGS?=--ignore=${FLAKE8_IGNORE} --per-file-ignores=\*/__init__.py\:F401,F403
+BLUE_EXTRA_ARGS?=
 
 ifeq "true" "${shell test -d docs && echo true}"
 DOCS_RST?=${shell find docs -type f -iname '*.rst'} docs/requirements_licenses.rst docs/requirements_dev_licenses.rst ${CHANGELOG_DOC}
@@ -78,7 +79,7 @@ flake_check: ${REQUIREMENTS_TEST}
 	${VIRTUALENV} flake8 ${PYTHON_MODULES} ${FLAKE8_ARGS}
 
 blue_check: ${REQUIREMENTS_TEST}
-	${VIRTUALENV} blue --check ${PYTHON_MODULES}
+	${VIRTUALENV} blue --check ${PYTHON_MODULES} ${BLUE_EXTRA_ARGS}
 
 bandit_check:
 	${VIRTUALENV} bandit -r $(PYTHON_MODULES)
@@ -89,7 +90,7 @@ ipdb_check:
 code_check: blue_check codestyle_check flake_check bandit_check ipdb_check
 
 fix_style: ${REQUIREMENTS_TEST}
-	${VIRTUALENV} blue ${PYTHON_MODULES}
+	${VIRTUALENV} blue ${PYTHON_MODULES} ${BLUE_EXTRA_ARGS}
 
 pdb: build ${REQUIREMENTS_TEST}
 	${VIRTUALENV} CI=1 py.test ${PYTHON_MODULES} -x --ff --pdb --ignore ${PYTHON_MODULES}/tests/integration
