@@ -24,6 +24,12 @@ FLAKE8_IGNORE?=W503,E203
 FLAKE8_ARGS?=--ignore=${FLAKE8_IGNORE} --per-file-ignores=\*/__init__.py\:F401,F403
 BLUE_EXTRA_ARGS?=
 
+ifeq "true" "${shell test -f setup_spec.py && echo true}"
+DIST_TARGET?= python_wheel python_spec_wheel
+else
+DIST_TARGET?= python_wheel
+endif
+
 ifeq "true" "${shell test -d docs && echo true}"
 DOCS_RST?=${shell find docs -type f -iname '*.rst'} docs/requirements_licenses.rst docs/requirements_dev_licenses.rst ${CHANGELOG_DOC}
 else
@@ -196,12 +202,7 @@ pdf: docs/_build/latex/${PROJECT_TAG}.tex
 docs_ci: docs/plantuml.jar
 	${MAKE} -C docs html
 
-ifeq "true" "${shell test -f setup_spec.py && echo true}"
-dist: python_wheel python_spec_wheel
-else
-dist: python_wheel
-endif
-
+dist: ${DIST_TARGET}
 
 deploy_twine: ${REQUIREMENTS_TEST} dist
 ifeq "true" "${TRAVIS}"
